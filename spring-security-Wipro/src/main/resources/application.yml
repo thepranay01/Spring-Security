@@ -1,0 +1,13 @@
+server:
+  port: 9091
+spring:
+  application:
+    name: Wipro-Security
+  datasource:
+    url: jdbc:mysql://localhost:3306/wipro_spring_security
+    username: root
+    password: Zoomli_2208
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: true

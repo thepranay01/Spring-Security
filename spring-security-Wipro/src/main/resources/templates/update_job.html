@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Job - Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #f0f2f5, #d9e3f0);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: left;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #4A90E2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #495057;
+        }
+
+        button {
+            background-color: #4A90E2;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #357ABD;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Update Job</h1>
+    <form id="updateJobForm">
+        <input type="hidden" id="jobId">
+
+        <label for="title">Job Title:</label>
+        <input type="text" id="title" required>
+
+        <label for="description">Job Description:</label>
+        <textarea id="description" required></textarea>
+
+        <button type="submit">Update Job</button>
+    </form>
+</div>
+
+<script>
+    const jobId = window.location.pathname.split("/").pop();
+
+    async function loadJobDetails() {
+        const response = await fetch(`http://localhost:9091/admin/job/${jobId}`);
+        const job = await response.json();
+        document.getElementById("jobId").value = job.id;
+        document.getElementById("title").value = job.title;
+        document.getElementById("description").value = job.description;
+    }
+
+    document.getElementById("updateJobForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const jobData = {
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value
+        };
+
+        const response = await fetch(`http://localhost:9091/admin/job/${jobId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(jobData)
+        });
+
+        if (response.ok) {
+            alert("Job updated successfully!");
+            window.location.href = "list_job.html";
+        } else {
+            alert("Error updating job.");
+        }
+    });
+
+    loadJobDetails();
+</script>
+</body>
+</html>

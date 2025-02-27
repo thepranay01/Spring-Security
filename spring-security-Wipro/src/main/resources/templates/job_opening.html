@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings - User Panel</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #5B247A, #1B1F3A);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #E94E77;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        th {
+            background-color: #E94E77;
+            color: #fff;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .apply-btn {
+            background-color: #28A745;
+            color: white;
+        }
+
+        .apply-btn:hover {
+            background-color: #218838;
+        }
+
+        .withdraw-btn {
+            background-color: #DC3545;
+            color: white;
+        }
+
+        .withdraw-btn:hover {
+            background-color: #C82333;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Available Jobs</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Job Title</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="jobTableBody">
+        </tbody>
+    </table>
+</div>
+
+<script>
+    const userId = 1; // Example: User ID is set to 1, replace dynamically as needed
+
+    async function fetchJobs() {
+        const response = await fetch("http://localhost:9091/user/job/list");
+        const jobs = await response.json();
+        const tableBody = document.getElementById("jobTableBody");
+
+        tableBody.innerHTML = "";
+        jobs.forEach(job => {
+            const row = `<tr>
+                            <td>${job.title}</td>
+                            <td>${job.description}</td>
+                            <td>
+                                <button class="apply-btn" onclick="applyJob(${job.id}, ${userId})">Apply</button>
+                                <button class="withdraw-btn" onclick="withdrawJob(${job.id}, ${userId})">Withdraw</button>
+                            </td>
+                        </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    async function applyJob(jobId, userId) {
+        const response = await fetch(`http://localhost:9091/user/apply/${jobId}/${userId}`, { method: "POST" });
+        const message = await response.text();
+        alert(message);
+    }
+
+    async function withdrawJob(jobId, userId) {
+        const response = await fetch(`http://localhost:9091/user/withdraw/${jobId}/${userId}`, { method: "DELETE" });
+        const message = await response.text();
+        alert(message);
+    }
+
+    fetchJobs();
+</script>
+</body>
+</html>
